@@ -11,8 +11,8 @@ data class Title (
 )
 
 data class Titles (
-    val movies : List<Title>,
-    val tvSeries : List<Title>
+    val movieResult : MovieResult,
+    val tvResult : TvShowResult
 )
 
 data class MovieResponse(
@@ -20,6 +20,18 @@ data class MovieResponse(
     val results: List<MovieDto>,
     val total_pages: Int,
     val total_results: Int
+)
+
+data class MovieResult(
+    val movies: List<Title>,
+    val page: Int,
+    val totalPages :Int
+)
+
+data class TvShowResult(
+    val shows: List<Title>,
+    val page: Int,
+    val totalPages :Int
 )
 
 data class MovieDto(

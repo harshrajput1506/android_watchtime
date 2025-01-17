@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -21,12 +22,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,6 +43,8 @@ import com.app.watchtime.ui.composables.TabBar
 import com.app.watchtime.ui.composables.TitleCoverCard
 import com.app.watchtime.ui.viewmodel.home.HomeState
 import com.app.watchtime.ui.viewmodel.home.HomeViewModel
+import io.reactivex.rxjava3.internal.operators.maybe.MaybeIsEmpty
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -77,15 +82,31 @@ fun HomeScreen(
             HorizontalPager(
                 state = pagerState
             ) { page ->
+
                 val gridState = rememberLazyGridState()
+
+                LaunchedEffect(gridState) {
+                    snapshotFlow { gridState.isScrolledToEnd() }
+                        .distinctUntilChanged()
+                        .collect { isAtEnd ->
+                            if(isAtEnd && state.value is HomeState.Fetched){
+                                viewModel.loadMoreTitle(if(page == 0) TitleType.MOVIE else TitleType.TV)
+                            }
+                        }
+                }
+
+
                 TitlesPage(
                     gridState = gridState
                 ) {
                     when (val homeState = state.value) {
-                        is HomeState.Error -> {}
+                        is HomeState.Error -> {
+                            item(span = { GridItemSpan(2) }) {
+                                ErrorMessage(homeState.message, isEmpty = false)
+                            }
+                        }
                         is HomeState.Fetched -> {
-                            val titles =
-                                if (page == 0) homeState.titles.movies else homeState.titles.tvSeries
+                            val titles = if (page == 0) homeState.movieTitles else homeState.showTitles
                             items(titles.size) { index ->
                                 TitleCard(titles[index]) {
                                     navigateToTitle(
@@ -94,11 +115,23 @@ fun HomeScreen(
                                     )
                                 }
                             }
+
+                            if (homeState.isLoadingMore) {
+                                items(2) {
+                                    TitleCard(isShimmer = true)
+                                }
+                            }
                         }
 
                         HomeState.Loading -> {
                             items(10) {
                                 TitleCard(isShimmer = true)
+                            }
+                        }
+
+                        HomeState.Empty -> {
+                            item(span = { GridItemSpan(2) }) {
+                                ErrorMessage()
                             }
                         }
                     }
@@ -181,4 +214,24 @@ fun TopBar() {
         }
     }
 }
+
+@Composable
+private fun ErrorMessage(
+    message: String = "No titles found",
+    isEmpty: Boolean = true
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyLarge,
+            color = if (isEmpty) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.error
+        )
+    }
+}
+
 
