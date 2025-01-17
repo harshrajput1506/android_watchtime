@@ -2,6 +2,7 @@ package com.app.watchtime.ui.viewmodel.home
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.app.watchtime.core.error_handler.ApiErrorHandler
 import com.app.watchtime.data.models.TitleType
 import com.app.watchtime.data.repository.HomeRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -53,7 +54,9 @@ class HomeViewModel (
                     moviesCurrentPage++
                     showsCurrentPage++
                 },
-                {error -> _state.value = HomeState.Error(error.message ?: "Something Went Wrong")}
+                {error ->
+                    val message = ApiErrorHandler().handleError(error)
+                    _state.value = HomeState.Error(message)}
             )
             .addTo(disposables)
 
@@ -112,8 +115,9 @@ class HomeViewModel (
                     moviesCurrentPage++
                     isLoadingMore = false
                 },
-                {
-                    error -> _state.value = HomeState.Error(error.message ?: "Something Went Wrong")
+                { error ->
+                    val message = ApiErrorHandler().handleError(error)
+                    _state.value = HomeState.Error(message)
                     isLoadingMore = false
                 }
             ).addTo(disposables)
@@ -148,7 +152,8 @@ class HomeViewModel (
                     isLoadingMore = false
                 },
                 { error ->
-                    _state.value = HomeState.Error(error.message ?: "Something Went Wrong")
+                    val message = ApiErrorHandler().handleError(error)
+                    _state.value = HomeState.Error(message)
                     isLoadingMore = false
                 }
             ).addTo(disposables)

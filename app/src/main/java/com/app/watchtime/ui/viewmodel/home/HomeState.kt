@@ -1,7 +1,6 @@
 package com.app.watchtime.ui.viewmodel.home
 
 import com.app.watchtime.data.models.Title
-import com.app.watchtime.data.models.Titles
 
 sealed class HomeState {
     data object Loading : HomeState()

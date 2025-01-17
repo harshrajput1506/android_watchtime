@@ -17,45 +17,51 @@ import retrofit2.http.Query
 interface ApiService {
     @GET("discover/movie")
     fun getMovies(
-        @Header("Authorization") token : String = "Bearer ${Constants.ACCESS_TOKEN}",
-        @Header("accept") accept : String = "application/json",
-        @Query("include_adult") isAdult : Boolean = true,
-        @Query("include_video") includeVideo : Boolean = false,
+        @Header("Authorization") token: String = "Bearer ${Constants.ACCESS_TOKEN}",
+        @Header("accept") accept: String = "application/json",
+        @Query("include_adult") isAdult: Boolean = true,
+        @Query("include_video") includeVideo: Boolean = false,
         @Query("language") language: String = "en-US",
-        @Query("page") page: Int = 1,
+        @Query("page") page: Int,  // Remove default value to enforce pagination
         @Query("sort_by") sortBy: String = "popularity.desc",
-    ) : Single<MovieResponse>
+    ): Single<MovieResponse>
 
     @GET("discover/tv")
     fun getTvSeries(
-        @Header("Authorization") token : String = "Bearer ${Constants.ACCESS_TOKEN}",
-        @Header("accept") accept : String = "application/json",
-        @Query("include_adult") isAdult : Boolean = true,
-        @Query("include_null_first_air_dates") includeFirstAirDates : Boolean = false,
+        @Header("Authorization") token: String = "Bearer ${Constants.ACCESS_TOKEN}",
+        @Header("accept") accept: String = "application/json",
+        @Query("include_adult") isAdult: Boolean = true,
+        @Query("include_null_first_air_dates") includeFirstAirDates: Boolean = false,
         @Query("language") language: String = "en-US",
-        @Query("page") page: Int = 1,
+        @Query("page") page: Int,  // Remove default value to enforce pagination
         @Query("sort_by") sortBy: String = "popularity.desc",
-    ) : Single<TvResponse>
+    ): Single<TvResponse>
 
     @GET("tv/{id}")
     fun getTvShowDetails(
-        @Header("Authorization") token : String = "Bearer ${Constants.ACCESS_TOKEN}",
-        @Header("accept") accept : String = "application/json",
-        @Path("id") tvId : Int,
+        @Header("Authorization") token: String = "Bearer ${Constants.ACCESS_TOKEN}",
+        @Header("accept") accept: String = "application/json",
+        @Path("id") tvId: Int,
         @Query("language") language: String = "en-US",
-    ) : Single<TvShowDetailsDto>
+    ): Single<TvShowDetailsDto>
 
     @GET("movie/{id}")
     fun getMovieDetails(
-        @Header("Authorization") token : String = "Bearer ${Constants.ACCESS_TOKEN}",
-        @Header("accept") accept : String = "application/json",
-        @Path("id") movieId : Int,
+        @Header("Authorization") token: String = "Bearer ${Constants.ACCESS_TOKEN}",
+        @Header("accept") accept: String = "application/json",
+        @Path("id") movieId: Int,
         @Query("language") language: String = "en-US",
-    ) : Single<MovieDetailsDto>
+    ): Single<MovieDetailsDto>
+
+    companion object {
+        const val INITIAL_PAGE = 1
+        const val DEFAULT_LANGUAGE = "en-US"
+        const val DEFAULT_SORT = "popularity.desc"
+    }
 }
 
 object RetrofitInstance {
-    val api : ApiService by lazy {
+    val api: ApiService by lazy {
         Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())

@@ -3,6 +3,7 @@ package com.app.watchtime.ui.viewmodel.title
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
+import com.app.watchtime.core.error_handler.ApiErrorHandler
 import com.app.watchtime.data.models.TitleType
 import com.app.watchtime.data.repository.TitleDetailsRepository
 import com.app.watchtime.ui.navigation.Screen
@@ -35,7 +36,9 @@ class TitleViewModel (
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                         {titleDetails -> _state.value = TitleState.Fetched(titleDetails)},
-                        { error -> _state.value = TitleState.Error(error.message ?: "Something Went Wrong") }
+                        { error ->
+                            val message = ApiErrorHandler().handleError(error)
+                            _state.value = TitleState.Error(message) }
                     ).addTo(disposables)
             }
             TitleType.TV -> {
@@ -44,7 +47,10 @@ class TitleViewModel (
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                         {titleDetails -> _state.value = TitleState.Fetched(titleDetails)},
-                        { error -> _state.value = TitleState.Error(error.message ?: "Something Went Wrong") }
+                        { error ->
+                            val message = ApiErrorHandler().handleError(error)
+                            _state.value = TitleState.Error(message)
+                        }
                     ).addTo(disposables)
             }
         }
