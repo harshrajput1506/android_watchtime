@@ -20,6 +20,8 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,6 +55,7 @@ fun HomeScreen(
 ) {
     val state = viewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
+    val snackHostState = remember { SnackbarHostState() }
 
     val pagerState = rememberPagerState(
         pageCount = { 2 })
@@ -61,7 +64,8 @@ fun HomeScreen(
     selectTab = pagerState.currentPage
 
     Scaffold(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(hostState = snackHostState) }
     ) { paddingValues ->
 
         Column(
@@ -93,15 +97,18 @@ fun HomeScreen(
                             }
                         }
                 }
-
-
                 TitlesPage(
                     gridState = gridState
                 ) {
                     when (val homeState = state.value) {
                         is HomeState.Error -> {
+                            coroutineScope.launch {
+                                snackHostState.showSnackbar(
+                                    message = homeState.message
+                                )
+                            }
                             item(span = { GridItemSpan(2) }) {
-                                ErrorMessage(homeState.message, isEmpty = false)
+                                EmptyMessage(homeState.message, isEmpty = false)
                             }
                         }
                         is HomeState.Fetched -> {
@@ -114,7 +121,6 @@ fun HomeScreen(
                                     )
                                 }
                             }
-
                             if (homeState.isLoadingMore) {
                                 items(2) {
                                     TitleCard(isShimmer = true)
@@ -130,7 +136,7 @@ fun HomeScreen(
 
                         HomeState.Empty -> {
                             item(span = { GridItemSpan(2) }) {
-                                ErrorMessage()
+                                EmptyMessage()
                             }
                         }
                     }
@@ -215,7 +221,7 @@ fun TopBar() {
 }
 
 @Composable
-private fun ErrorMessage(
+private fun EmptyMessage(
     message: String = "No titles found",
     isEmpty: Boolean = true
 ) {

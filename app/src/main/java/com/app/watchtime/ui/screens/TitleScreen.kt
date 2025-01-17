@@ -28,9 +28,14 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
@@ -43,6 +48,7 @@ import com.app.watchtime.ui.theme.Green
 import com.app.watchtime.ui.theme.Red
 import com.app.watchtime.ui.viewmodel.title.TitleState
 import com.app.watchtime.ui.viewmodel.title.TitleViewModel
+import kotlinx.coroutines.coroutineScope
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
 
@@ -53,6 +59,7 @@ fun TitleScreen(
     onNavigateBack : () -> Unit
 ) {
     val state = viewModel.state.collectAsState()
+
     BottomSheetScaffold (
         modifier = Modifier.fillMaxSize(),
         sheetContent = {
@@ -98,6 +105,9 @@ fun TitleScreen(
             }
         }
     }
+
+
+
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -250,6 +260,7 @@ fun UserScoreBar(
 
 @Composable
 private fun ErrorContent(message: String) {
+
     Box(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
