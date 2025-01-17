@@ -108,7 +108,7 @@ fun HomeScreen(
                                 )
                             }
                             item(span = { GridItemSpan(2) }) {
-                                EmptyMessage(homeState.message, isEmpty = false)
+                                EmptyMessage()
                             }
                         }
                         is HomeState.Fetched -> {
@@ -124,6 +124,14 @@ fun HomeScreen(
                             if (homeState.isLoadingMore) {
                                 items(2) {
                                     TitleCard(isShimmer = true)
+                                }
+                            }
+
+                            if(!homeState.loadingMoreError.isNullOrEmpty()){
+                                coroutineScope.launch {
+                                    snackHostState.showSnackbar(
+                                        message = homeState.loadingMoreError
+                                    )
                                 }
                             }
                         }

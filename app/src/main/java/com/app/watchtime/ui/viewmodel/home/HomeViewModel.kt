@@ -44,10 +44,17 @@ class HomeViewModel (
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { titles ->
-                    _state.value = HomeState.Fetched(
-                        movieTitles = titles.movieResult.movies,
-                        showTitles = titles.tvResult.shows
-                    )
+                    _state.value = when {
+                        titles.tvResult.shows.isEmpty() && titles.movieResult.movies.isEmpty() -> {
+                            HomeState.Error("Something went wrong")
+                        }
+                        else -> {
+                            HomeState.Fetched(
+                                movieTitles = titles.movieResult.movies,
+                                showTitles = titles.tvResult.shows
+                            )
+                        }
+                    }
                     Log.d(TAG, "fetchTitles: $titles")
                     moviesTotalPages = titles.movieResult.totalPages
                     showsTotalPages = titles.tvResult.totalPages
@@ -56,7 +63,7 @@ class HomeViewModel (
                 },
                 {error ->
                     val message = ApiErrorHandler().handleError(error)
-                    _state.value = HomeState.Error(message)}
+                    _state.value = HomeState.Error(message) }
             )
             .addTo(disposables)
 
@@ -107,7 +114,8 @@ class HomeViewModel (
                         currentState is HomeState.Fetched -> {
                             currentState.copy(
                                 movieTitles = currentState.movieTitles + movieResult.movies,
-                                isLoadingMore = false
+                                isLoadingMore = false,
+                                loadingMoreError = null
                             )
                         }
                          else -> currentState
@@ -117,7 +125,15 @@ class HomeViewModel (
                 },
                 { error ->
                     val message = ApiErrorHandler().handleError(error)
-                    _state.value = HomeState.Error(message)
+                    _state.value = when {
+                        _state.value is HomeState.Fetched -> {
+                            (_state.value as HomeState.Fetched).copy(
+                                loadingMoreError = message,
+                                isLoadingMore = false
+                            )
+                        }
+                        else -> HomeState.Error(message)
+                    }
                     isLoadingMore = false
                 }
             ).addTo(disposables)
@@ -143,7 +159,8 @@ class HomeViewModel (
                         currentState is HomeState.Fetched -> {
                             currentState.copy(
                                 showTitles = currentState.showTitles + showResult.shows,
-                                isLoadingMore = false
+                                isLoadingMore = false,
+                                loadingMoreError = null
                             )
                         }
                         else -> currentState
@@ -153,7 +170,15 @@ class HomeViewModel (
                 },
                 { error ->
                     val message = ApiErrorHandler().handleError(error)
-                    _state.value = HomeState.Error(message)
+                    _state.value = when {
+                        _state.value is HomeState.Fetched -> {
+                            (_state.value as HomeState.Fetched).copy(
+                                loadingMoreError = message,
+                                isLoadingMore = false
+                            )
+                        }
+                        else -> HomeState.Error(message)
+                    }
                     isLoadingMore = false
                 }
             ).addTo(disposables)
