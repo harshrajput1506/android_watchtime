@@ -20,7 +20,7 @@ class ApiErrorHandler {
             }
             is SocketTimeoutException ->  "Request timed out"
             is UnknownHostException, is IOException -> "No internet connection"
-            else -> "Unknown error occurred"
+            else -> "Unknown error occurred - ${throwable.message}"
         }
     }
 }
