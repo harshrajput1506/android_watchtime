@@ -14,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 
 @Composable
 fun ShimmerEffect(
@@ -53,7 +55,7 @@ fun ShimmerEffect(
     )
 
     Box(
-        modifier = modifier
+        modifier = modifier.semantics { contentDescription = "Shimmer Effect" }
     ) {
         Spacer(
             modifier = Modifier
@@ -61,6 +63,4 @@ fun ShimmerEffect(
                 .background(brush)
         )
     }
-
-
 }
