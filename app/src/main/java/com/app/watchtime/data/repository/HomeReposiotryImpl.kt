@@ -30,8 +30,6 @@ class HomeRepositoryImpl(
             Titles(movieResult = movieResult, tvResult = tvResult)
         }.onErrorResumeNext { error ->
             Single.error(error)
-        }.doOnError { error ->
-            Log.e(TAG, "Error fetching titles", error)
         }
     }
 
@@ -47,9 +45,6 @@ class HomeRepositoryImpl(
             .onErrorResumeNext { error ->
                 Single.error(error)
             }
-            .doOnError { error ->
-                Log.e(TAG, "Error fetching movies for page $page", error)
-            }
     }
 
     override fun getShows(page: Int): Single<TvShowResult> {
@@ -63,9 +58,6 @@ class HomeRepositoryImpl(
             }
             .onErrorResumeNext { error ->
                 Single.error(error)
-            }
-            .doOnError { error ->
-                Log.e(TAG, "Error fetching TV shows for page $page", error)
             }
     }
 

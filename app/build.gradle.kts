@@ -59,6 +59,22 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     testImplementation (libs.mockk)
+    testImplementation ("org.mockito:mockito-core:5.7.0")
+    //testImplementation ("org.mockito:mockito-inline:5.7.0")  // For mocking final classes
+    testImplementation ("com.google.truth:truth:1.1.5" ) // Optional but provides fluent assertions
+
+    // RxJava Testing
+    testImplementation ("io.reactivex.rxjava3:rxjava:3.1.8")
+    testImplementation ("io.reactivex.rxjava3:rxandroid:3.0.2")
+
+    // Android Architecture Components Testing
+    testImplementation (libs.androidx.core.testing)
+
+    // For testing coroutines if you plan to use them
+    testImplementation( libs.kotlinx.coroutines.test)
+
+    // Mockito Kotlin (makes Mockito more Kotlin-friendly)
+    testImplementation (libs.mockito.kotlin.v521)
 
     implementation (libs.retrofit)
     implementation (libs.converter.gson)

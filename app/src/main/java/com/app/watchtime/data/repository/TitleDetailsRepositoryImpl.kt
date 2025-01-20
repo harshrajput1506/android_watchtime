@@ -15,8 +15,6 @@ class TitleDetailsRepositoryImpl(
             it.toTitleDetails()
         }.onErrorResumeNext { error ->
             Single.error(error)
-        }.doOnError { error ->
-            Log.e("TitleDetailsRepository", "getTvShowDetails: error fetching show details", error)
         }
     }
 
@@ -25,9 +23,6 @@ class TitleDetailsRepositoryImpl(
             it.toTitleDetails()
         }.onErrorResumeNext { error ->
             Single.error(error)
-        }.doOnError { error ->
-            Log.e("TitleDetailsRepository", "getMovieDetails:  error fetching movie details", error)
-
         }
     }
 }
