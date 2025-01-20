@@ -18,6 +18,14 @@
       </SelectionState>
       <SelectionState runConfigName="TitleScreenTest">
         <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2025-01-20T08:12:57.109024Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=RZCX62G6JTY" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
       </SelectionState>
       <SelectionState runConfigName="whenStateIsFetched_shouldShowTitles()">
         <option name="selectionMode" value="DROPDOWN" />

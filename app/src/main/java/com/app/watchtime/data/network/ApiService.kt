@@ -21,9 +21,9 @@ interface ApiService {
         @Header("accept") accept: String = "application/json",
         @Query("include_adult") isAdult: Boolean = true,
         @Query("include_video") includeVideo: Boolean = false,
-        @Query("language") language: String = "en-US",
-        @Query("page") page: Int,  // Remove default value to enforce pagination
-        @Query("sort_by") sortBy: String = "popularity.desc",
+        @Query("language") language: String = DEFAULT_LANGUAGE,
+        @Query("page") page: Int,
+        @Query("sort_by") sortBy: String = DEFAULT_SORT,
     ): Single<MovieResponse>
 
     @GET("discover/tv")
@@ -32,9 +32,9 @@ interface ApiService {
         @Header("accept") accept: String = "application/json",
         @Query("include_adult") isAdult: Boolean = true,
         @Query("include_null_first_air_dates") includeFirstAirDates: Boolean = false,
-        @Query("language") language: String = "en-US",
-        @Query("page") page: Int,  // Remove default value to enforce pagination
-        @Query("sort_by") sortBy: String = "popularity.desc",
+        @Query("language") language: String = DEFAULT_LANGUAGE,
+        @Query("page") page: Int,
+        @Query("sort_by") sortBy: String = DEFAULT_SORT,
     ): Single<TvResponse>
 
     @GET("tv/{id}")
@@ -42,7 +42,7 @@ interface ApiService {
         @Header("Authorization") token: String = "Bearer ${Constants.ACCESS_TOKEN}",
         @Header("accept") accept: String = "application/json",
         @Path("id") tvId: Int,
-        @Query("language") language: String = "en-US",
+        @Query("language") language: String = DEFAULT_LANGUAGE,
     ): Single<TvShowDetailsDto>
 
     @GET("movie/{id}")
@@ -50,7 +50,7 @@ interface ApiService {
         @Header("Authorization") token: String = "Bearer ${Constants.ACCESS_TOKEN}",
         @Header("accept") accept: String = "application/json",
         @Path("id") movieId: Int,
-        @Query("language") language: String = "en-US",
+        @Query("language") language: String = DEFAULT_LANGUAGE,
     ): Single<MovieDetailsDto>
 
     companion object {

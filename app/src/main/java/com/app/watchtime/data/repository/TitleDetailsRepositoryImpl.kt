@@ -1,6 +1,5 @@
 package com.app.watchtime.data.repository
 
-import android.util.Log
 import com.app.watchtime.data.models.TitleDetails
 import com.app.watchtime.data.models.toTitleDetails
 import com.app.watchtime.data.network.ApiService
